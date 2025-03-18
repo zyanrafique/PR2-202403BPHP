@@ -109,6 +109,7 @@ if(isset($_POST['addProduct'])){
     $pDes = $_POST['prDes'];
     $pPrice = $_POST['prPrice'];
     $pQty = $_POST['prQty'];
+    $categoryId = $_POST['categoryId'];
     $pImageName = $_FILES['prImage']['name'];
     $pImageTmpName = $_FILES['prImage']['tmp_name'];
     $extension = pathinfo( $pImageName , PATHINFO_EXTENSION);
@@ -136,17 +137,16 @@ if(isset($_POST['addProduct'])){
     //data add to database
     if (empty($pNameErr) && empty($pDesErr) && empty($pPriceErr) && empty($pImageNameErr)) {
         if (move_uploaded_file($pImageTmpName, $destination)) {
-            $c_id = $_POST['category']; // Category ID from dropdown
+            $c_id = $_POST['categoryId']; // Category ID from dropdown
     
             $query = $pdo->prepare("INSERT INTO products(name, description, price, image, qty, c_id) 
-                                    VALUES (:prName, :prDes, :prPrice, :prImage, :prQty, :c_id)");
+                                    VALUES (:prName, :prDes, :prPrice, :prImage, :prQty, :cId)");
             $query->bindParam(':prName', $pName);
             $query->bindParam(':prDes', $pDes);
             $query->bindParam(':prPrice', $pPrice);
             $query->bindParam(':prImage', $pImageName);
             $query->bindParam(':prQty', $pQty);
-            $query->bindParam(':c_id', $c_id); // Bind category ID
-    
+            $query->bindParam(':cId', $categoryId); // Bind category ID
             $query->execute();
             echo "<script>alert('Product added successfully'); location.assign('addProduct.php')</script>";
         }

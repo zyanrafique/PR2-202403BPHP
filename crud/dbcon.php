@@ -12,7 +12,7 @@ Use Case:
 
 
 <?php
-$server = "mysql:host=localhost;dbname=signin";
+$server = "mysql:host=localhost;dbname=logins";
 $user = "root";
 $password = "" ;
  $pdo =  new PDO($server , $user , $password);

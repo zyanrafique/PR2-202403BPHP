@@ -13,12 +13,12 @@ Use Case:
 
 
 <?php
-$server = "mysql:host=localhost;dbname=signin";
+$server = "mysql:host=localhost;dbname=adminpanel";
 $user = "root";
 $password = "" ;
  $pdo =  new PDO($server , $user , $password);
  if($pdo){
-    // echo "<script>alert('connected')</script>";    
+   //  echo "<script>alert('connected')</script>";    
  }
 
 ?>
