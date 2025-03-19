@@ -157,7 +157,7 @@ if(isset($_POST['addProduct'])){
 
 
 // Update a product start
-//editCate .php
+//editCate.php
 if (isset($_POST['updateproduct'])) {
     $pName = $_POST['prName'];
     $pDes = $_POST['prDes'];
@@ -165,41 +165,50 @@ if (isset($_POST['updateproduct'])) {
     $pQty = $_POST['prQty'];
     $categoryId = $_POST['categoryId'];
     $productId = $_GET['productId'];
+
+    // Validation
     if (empty($pName)) {
         $pNameErr = "Category Name is Required";
     }
     if (empty($pDes)) {
         $pDesErr = "Category Description is Required";
     }
-//update product without image
-    $query = $pdo->prepare("update products set name = :prName , description = :prDes , qty = :prQty , price = :prPrice , c_id = :cId where id = :proId");
-    //update product with image
-    if(!empty($_FILES['prImage']['name'])){
-            $pImageName = $_FILES['prImage']['name'];
-            $pImageTmpName = $_FILES['prImage']['tmp_name'];
-            $extension = pathinfo($pImageName,PATHINFO_EXTENSION);
-            $destination = "productimg/".$pImageName ;
-            $format = ["jpg" , "png" , "jpeg" ,"webp"];
-            if(in_array($extension,$format)){
-                    if(move_uploaded_file($pImageTmpName,$destination)){
-                        $query = $pdo->prepare("update products set name = :prName , description = :prDes , qty = :prQty , price = :prPrice , c_id = :cId , image = :prImage where id = :proId");
-                        $query->bindParam('prImage',$pImageName);
-                    }
+
+    // Default query to update product without image
+    $query = $pdo->prepare("UPDATE products SET name = :prName, description = :prDes, qty = :prQty, price = :prPrice, c_id = :cId WHERE id = :proId");
+
+    // Update product with image if image is provided
+    if (!empty($_FILES['prImage']['name'])) {
+        $pImageName = $_FILES['prImage']['name'];
+        $pImageTmpName = $_FILES['prImage']['tmp_name'];
+        $extension = pathinfo($pImageName, PATHINFO_EXTENSION);
+        $destination = "productimg/" . $pImageName;
+        $format = ["jpg", "png", "jpeg", "webp"];
+
+        if (in_array($extension, $format)) {
+            if (move_uploaded_file($pImageTmpName, $destination)) {
+                // Update query with image
+                $query = $pdo->prepare("UPDATE products SET name = :prName, description = :prDes, qty = :prQty, price = :prPrice, c_id = :cId, image = :prImage WHERE id = :proId");
+                $query->bindParam(':prImage', $pImageName);
             }
-            else{
-                $pImageNameErr = "Invalid extension";
-            }          
+        } else {
+            $pImageNameErr = "Invalid file extension";
+        }
     }
+
+    // Bind parameters
     $query->bindParam(':prName', $pName);
     $query->bindParam(':prDes', $pDes);
     $query->bindParam(':prPrice', $pPrice);
-    $query->bindParam(':prImage', $pImageName);
     $query->bindParam(':prQty', $pQty);
     $query->bindParam(':cId', $categoryId);
-    $query->bindParam('proId',$productId);
+    $query->bindParam(':proId', $productId);  // Corrected this line
+
+    // Execute query
     $query->execute();
     echo "<script>alert('Product updated successfully'); location.assign('viewProduct.php')</script>";
 }
+
 // Update product end
 
 
