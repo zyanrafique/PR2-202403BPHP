@@ -161,6 +161,9 @@ if(isset($_POST['addProduct'])){
 if (isset($_POST['updateproduct'])) {
     $pName = $_POST['prName'];
     $pDes = $_POST['prDes'];
+    $pPrice = $_POST['prPrice'];
+    $pQty = $_POST['prQty'];
+    $categoryId = $_POST['categoryId'];
     $productId = $_GET['productId'];
     if (empty($pName)) {
         $pNameErr = "Category Name is Required";
@@ -169,7 +172,7 @@ if (isset($_POST['updateproduct'])) {
         $pDesErr = "Category Description is Required";
     }
 //update product without image
-    $query = $pdo->prepare("update products set name = :prName , description = :prDes where id = :pId");
+    $query = $pdo->prepare("update products set name = :prName , description = :prDes , qty = :prQty , price = :prPrice , c_id = :cId where id = :proId");
     //update product with image
     if(!empty($_FILES['prImage']['name'])){
             $pImageName = $_FILES['prImage']['name'];
@@ -179,7 +182,7 @@ if (isset($_POST['updateproduct'])) {
             $format = ["jpg" , "png" , "jpeg" ,"webp"];
             if(in_array($extension,$format)){
                     if(move_uploaded_file($pImageTmpName,$destination)){
-                        $query = $pdo->prepare("update products set name = :prName , description = :prDes ,image = :prImage where id = :pId");
+                        $query = $pdo->prepare("update products set name = :prName , description = :prDes , qty = :prQty , price = :prPrice , c_id = :cId , image = :prImage where id = :proId");
                         $query->bindParam('prImage',$pImageName);
                     }
             }
@@ -187,9 +190,13 @@ if (isset($_POST['updateproduct'])) {
                 $pImageNameErr = "Invalid extension";
             }          
     }
-    $query->bindParam('prName',$pName);
-    $query->bindParam('prDes',$pDes);
-    $query->bindParam('pId',$productId);
+    $query->bindParam(':prName', $pName);
+    $query->bindParam(':prDes', $pDes);
+    $query->bindParam(':prPrice', $pPrice);
+    $query->bindParam(':prImage', $pImageName);
+    $query->bindParam(':prQty', $pQty);
+    $query->bindParam(':cId', $categoryId);
+    $query->bindParam('proId',$productId);
     $query->execute();
     echo "<script>alert('Product updated successfully'); location.assign('viewProduct.php')</script>";
 }
