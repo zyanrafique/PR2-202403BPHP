@@ -18,7 +18,7 @@ $user = "root";
 $password = "" ;
  $pdo =  new PDO($server , $user , $password);
  if($pdo){
-   // echo "<script>alert('connected with adminpanel')</script>";    
+    echo "<script>alert('connected with adminpanel')</script>";    
  }
 
 ?>
